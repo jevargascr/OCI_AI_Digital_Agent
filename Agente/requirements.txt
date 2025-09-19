@@ -1,0 +1,5 @@
+oci[adk]
+streamlit
+openai
+nest_asyncio
+watchdog
