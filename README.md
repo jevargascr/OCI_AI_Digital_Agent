@@ -34,3 +34,4 @@ Este chatbot está diseñado para servir como un ejemplo práctico de integraci�
 ---
 
 Este documento es el punto de partida del proyecto, y servirá como guía para la arquitectura, implementación y pruebas del asistente virtual.
+V2
