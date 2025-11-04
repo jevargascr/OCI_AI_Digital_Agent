@@ -1,19 +1,16 @@
+# Creado por Jeffrey Vargas
+
 # Page 1
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Creación de Asistente Digital IA en OCI 
 I. Crear política de IA en el tenant 
 Navegamos a Identity & Security -> Policies 
- 
- 
-
 
 ![Image Page 1-1](./Images/page1_img1.png)
 
 # Page 2
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Create Policy -> Crear una nueva política en el compartment root, 
 Poner Nombre, Descripción y seleccionar Show manual editor 
@@ -25,23 +22,17 @@ Allow any-user to read database-tools-family in tenancy
 Allow any-user to read secret-family in tenancy 
 Allow any-user to {BUCKET_INSPECT, BUCKET_READ, OBJECT_INSPECT, 
 OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy 
- 
-
 
 ![Image Page 2-1](./Images/page2_img1.png)
 
 # Page 3
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 II. Creación de Compartment 
 Navegamos a Identity & Security -> Compartments  
  
 Create compartment -> Poner Nombre y Descripción, usar este compartment para crear 
 todos los recursos de este laboratorio. 
- 
- 
-
 
 ![Image Page 3-1](./Images/page3_img1.png)
 
@@ -49,7 +40,6 @@ todos los recursos de este laboratorio.
 
 # Page 4
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 III. Creación de VCN 
 Navegamos a Networking -> Virtual Cloud Networks 
@@ -58,22 +48,18 @@ Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto
  
 Poner Nombre y crear. 
 
-
 ![Image Page 4-1](./Images/page4_img1.png)
 
 ![Image Page 4-2](./Images/page4_img2.png)
 
 # Page 5
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Una vez creada la VCN entrar a la lista de seguridad de la sub red pública y habilitar los 
 puertos TCP 80 y 8501 
  
 IV. Creación del Bucket 
 Navegamos a Storage -> Buckets 
- 
-
 
 ![Image Page 5-1](./Images/page5_img1.png)
 
@@ -81,19 +67,15 @@ Navegamos a Storage -> Buckets
 
 # Page 6
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Create bucket -> La creación puede realizarse con los parámetros por defecto, solo se 
 debe de agregar el nombre. 
 Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente. 
- 
-
 
 ![Image Page 6-1](./Images/page6_img1.png)
 
 # Page 7
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 V. Creación de Máquina Virtual en OCI 
 Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una 
@@ -114,12 +96,9 @@ oci -v
 oci setup config 
 # Probamos que traiga nuestro Object storage namespace 
 oci os ns get 
- 
-
 
 # Page 8
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 VI. Descargar el Sitio: 
 Se identiﬁca la página web principal y a través del comando wget se descarga el sitio. 
@@ -138,14 +117,9 @@ Notas:
 • Las partes marcadas en amarillo son las que deben ser sustituidas por el nuevo 
 sitio web a trabajar. 
 • El sitio quedara en la ruta /home/opc/html 
- 
- 
+
 • Sacar una copia del index.html para ser modiﬁcada después y dejarlo en la ruta 
 /home/opc/ 
- 
- 
- 
-
 
 ![Image Page 8-1](./Images/page8_img1.png)
 
@@ -153,7 +127,6 @@ sitio web a trabajar.
 
 # Page 9
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 VII. Cargar sitio web al Bucket. 
 El comando para cargar en modo bulk el sitio a OCI es: 
@@ -165,22 +138,15 @@ Notas:
 de su ambiente 
 • Validar una vez terminado el comando que en el bucket los archivos hayan sido 
 cargados exitosamente. 
- 
- 
-
 
 # Page 10
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 VIII. Creación del Knowledge Base para nuestro agente. 
 Una vez que el sitio ya se encuentre cargado en nuestro Bucket procederemos a crear el 
 Knowledge Base. 
 Nota: Se puede dejar creando este componente y avanzar con el tutorial. 
 Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases 
- 
- 
-
 
 ![Image Page 10-1](./Images/page10_img1.png)
 
@@ -188,13 +154,10 @@ Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases
 
 # Page 11
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
  
 En la creación debemos de introducir un nombre, importante que el Data storage type sea 
 Object storage, marcar el check de Enable hybrid search y deﬁnir el data source 
- 
-
 
 ![Image Page 11-1](./Images/page11_img1.png)
 
@@ -202,14 +165,10 @@ Object storage, marcar el check de Enable hybrid search y deﬁnir el data sourc
 
 # Page 12
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 En el data source poner: 
 Un nombre, habilitar Enable multi-modal parsing, seleccionar el Bucket creado 
 anteriormente, habilitar Select all in bucket y crear 
- 
- 
-
 
 ![Image Page 12-1](./Images/page12_img1.png)
 
@@ -217,28 +176,21 @@ anteriormente, habilitar Select all in bucket y crear
 
 # Page 13
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 IX. Creación del Agente: 
 Nota Importante: El Knowledge Bases no será relacionado al agente en este momento, ya 
 que eso se hará a través del código al igual que las instrucciones del ruteo; Además, se 
 puede dejar creando este componente y avanzar con el tutorial. 
 En la primera página se debe de agregar el nombre y darle Next 
- 
- 
-
 
 ![Image Page 13-1](./Images/page13_img1.png)
 
 # Page 14
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Segunda página dejarla así y Next 
  
 Tercera página dejarla igual y Next 
- 
-
 
 ![Image Page 14-1](./Images/page14_img1.png)
 
@@ -246,14 +198,8 @@ Tercera página dejarla igual y Next
 
 # Page 15
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Cuarta página crear agente y aceptar política 
- 
- 
- 
- 
-
 
 ![Image Page 15-1](./Images/page15_img1.png)
 
@@ -261,7 +207,6 @@ Cuarta página crear agente y aceptar política
 
 # Page 16
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 X. Conﬁguración de la Aplicación  
 Para esta parte nos devolvemos a la máquina virtual previamente creada 
@@ -290,12 +235,10 @@ cd Agente
 /usr/bin/python3.11 -m venv IA-VENV 
 source IA-VENV/bin/activate 
 
-
 ![Image Page 16-1](./Images/page16_img1.png)
 
 # Page 17
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 # Validar que las versiones sean la 11 
 python -V   
@@ -310,9 +253,6 @@ pip install -r requirements.txt
 para sustituir estos valores: 
 knowledge_base_id= 
 agent_endpoint_id= 
- 
- 
-
 
 ![Image Page 17-1](./Images/page17_img1.png)
 
@@ -320,28 +260,22 @@ agent_endpoint_id=
 
 # Page 18
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 Notas: 
 El  knowledge_base_id es el OCID de nuestra base de datos de conocimiento y en OCI se 
 encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> OCID 
 
-
 ![Image Page 18-1](./Images/page18_img1.png)
 
 # Page 19
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encuentra en 
 Menu: Analytics & AI -> Generative AI Agents -> Agents -> Endpoint -> OCID 
- 
- 
+
 # Editar 
 cd $HOME/Agente/UI/ 
 vi config_agente.py 
- 
-
 
 ![Image Page 19-1](./Images/page19_img1.png)
 
@@ -349,7 +283,6 @@ vi config_agente.py
 
 # Page 20
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 # Correr la aplicación y probar que el bot funciona 
 Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowledge base 
@@ -362,8 +295,6 @@ streamlit run app.py
  
 Abrir dirección Externa, se debería de ver así (inicia con un proceso de instalación tener 
 paciencia) 
- 
-
 
 ![Image Page 20-1](./Images/page20_img1.png)
 
@@ -373,7 +304,6 @@ paciencia)
 
 # Page 21
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
  
 # Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque 
@@ -385,10 +315,8 @@ cd $HOME/Agente/UI/
 pkill -f "streamlit run app.py"    
 rm streamlit.log  
 
-
 # Page 22
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 XI. Conﬁguración del Sitio Web 
 La idea principal es poder embeber nuestro asistente digital en una copia local de la 
@@ -432,12 +360,10 @@ amarillo por la dirección publica de su máquina virtual.
     #asistente-launcher { 
         position: fixed; 
 
-
 ![Image Page 22-1](./Images/page22_img1.png)
 
 # Page 23
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
         bottom: calc(28px * var(--asistente-scale)); 
         right: calc(28px * var(--asistente-scale)); 
@@ -484,24 +410,19 @@ Conﬁdential – Oracle Internal
       } 
     } 
   </script> 
- 
-
 
 ![Image Page 23-1](./Images/page23_img1.png)
 
 # Page 24
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 # Habilitation de Networking 
 sudo firewall-cmd --permanent --add-port=8080/tcp 
 sudo firewall-cmd --permanent --add-service=http 
 sudo firewall-cmd --reload 
 
-
 # Page 25
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 # Instalación de webserver nginx 
 sudo dnf install -y nginx 
@@ -534,10 +455,8 @@ server {
 } 
 NGINX 
 
-
 # Page 26
 
-By Je&rey Vargas – Je&rey.vargas@oracle.com 
 Conﬁdential – Oracle Internal 
 # Continuar con la conﬁguración 
 sudo mkdir -p /var/www/misitio 
@@ -550,12 +469,5 @@ sudo systemctl status nginx
  
 Probar con la IP publica: 
 http://64.181.201.189 
- 
- 
- 
- 
- 
- 
-
 
 ![Image Page 26-1](./Images/page26_img1.png)
