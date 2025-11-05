@@ -43,7 +43,9 @@ Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y e
 Configuración en la lista de seguridad de la subred pública:
 ```bash
 # Ingresar a la máquina virtual con el comando ssh
+```bash
 ssh -i llave.key opc@PublicIP
+```
 ```
 Realizar la instalación dentro de la maquina:
 Lo primero que realizaremos es la instalación y configuración del OCI CLI
@@ -51,14 +53,22 @@ Cualquier duda de instalación referenciar a este link:
 
 ```bash
 # Instalar CLI
+```bash
 sudo dnf -y install oraclelinux-developer-release-el9
 sudo dnf install python39-oci-cli
+```
 # Validamos la instalación: oci -v
+```bash
 oci -v
+```
 # Realizamos la configuración:
+```bash
 oci setup config
+```
 # Probamos que traiga nuestro Object storage namespace
+```bash
 oci os ns get
+```
 ```
 
 
@@ -67,8 +77,10 @@ Se identifica la página web principal y a través del comando wget se descarga 
 Nota: Podría ser que el sitio este protegido en ese caso tendríamos que pensar en un plan B como descargar los archivos htmls y PDFs manualmente de las páginas de interés o modificar esta instrucción.
 Página de ejemplo:
 ```bash
+```bash
 cd $HOME
 wget --recursive --level=3 --no-parent --adjust-extension --convert-links --domains= www.grupomutual.fi.cr, grupomutual.fi.cr --reject="jpg,jpeg,png,gif,svg,webp,ico,css,js,woff,woff2,ttf,mp4,avi,pdf" --header="Accept: text/html" --header="Accept-Language: es-CR,es;q=0.9,en;q=0.8" --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36" --execute robots=off --directory-prefix=html https://www.grupomutual.fi.cr/
+```
 ```
 Notas:
 Las partes marcadas en amarillo son las que deben ser sustituidas por el nuevo sitio web a trabajar.
@@ -83,8 +95,10 @@ Sacar una copia del index.html para ser modificada después y dejarlo en la ruta
 Cargar sitio web al Bucket.
 El comando para cargar en modo bulk el sitio a OCI es:
 ```bash
+```bash
 cd $HOME
 oci os object bulk-upload --bucket-name Bucket-MyCustomer --src-dir /home/opc/html/ --namespace axhxyz2qo8xt
+```
 ```
 Notas:
 Las partes marcadas en amarillo son las que deben ser sustituidas por los valores de su ambiente
@@ -128,14 +142,23 @@ Configuración de la Aplicación
 Para esta parte nos devolvemos a la máquina virtual previamente creada
 ```bash
 # Ingresar a la máquina virtual con el comando ssh
+```bash
 ssh -i llave.key opc@PublicIP
+```
 #  Configurar Networking
+```bash
 sudo firewall-cmd --permanent --add-port=8501/tcp
 sudo firewall-cmd --reload
+```
 #  Descargar la aplicación desde github
+```bash
 cd $HOME
 ```
+```
+```bash
 wget
+```
+```bash
 ```bash
 unzip main.zip -d temp
 mv temp/OCI_AI_Digital_Agent-main/* .
@@ -143,32 +166,43 @@ rm -rf temp
 rm main.zip
 rm README.md
 ```
+```
 Nuestro directorio $HOME se debería de ver así
 
 ```bash
 # Instalación de Python 11
+```bash
 sudo dnf -y update
 sudo dnf install -y python3.11 python3.11-devel
+```
 ```
 
 ```bash
 # Creación ambiente virtual
+```bash
 cd $HOME
 cd Agente
 ```
+```
 /usr/bin/python3.11 -m venv IA-VENV
 ```bash
+```bash
 source IA-VENV/bin/activate 
+```
 # Validar que las versiones sean la 11
+```bash
 python -V
 pip -V
+```
 ```
 
 ```bash
 # Instalar actualizaciones y requisitos
+```bash
 cd $HOME/Agente/
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
 ```
 
 ```bash
@@ -187,8 +221,10 @@ El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encu
 
 ```bash
 # Editar
+```bash
 cd $HOME/Agente/UI/
 vi config_agente.py
+```
 ```
 
 
@@ -197,8 +233,10 @@ Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowled
 
 ```bash
 # Prueba Inicial
+```bash
 cd $HOME/Agente/UI/
 streamlit run app.py
+```
 ```
 
 Abrir dirección Externa, se debería de ver así (inicia con un proceso de instalación tener paciencia)
@@ -206,12 +244,16 @@ Abrir dirección Externa, se debería de ver así (inicia con un proceso de inst
 
 ```bash
 # Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque se termine la sesión, se deja un archivo de log que puede ser consultado después
+```bash
 cd $HOME/Agente/UI/
 nohup streamlit run app.py > streamlit.log 2>&1 &
+```
 # En caso de necesitar matar el proceso
+```bash
 cd $HOME/Agente/UI/
 pkill -f "streamlit run app.py"
 rm streamlit.log
+```
 ```
 
 Configuración del Sitio Web
@@ -221,8 +263,10 @@ La idea principal es poder embeber nuestro asistente digital en una copia local 
 ```
 Se debe de modificar el index.html
 ```bash
+```bash
 cd $HOME
 vi index.html
+```
 ```
 Agregar este código justo antes de cerrar el body, pero antes modificar lo que está en amarillo por la dirección publica de su máquina virtual.
 <!-- Estilos para el botón flotante y el panel -->
@@ -305,18 +349,24 @@ Agregar este código justo antes de cerrar el body, pero antes modificar lo que 
 
 # Habilitation de Networking
 ```bash
+```bash
 sudo firewall-cmd --permanent --add-port=8080/tcp
 sudo firewall-cmd --permanent --add-service=http
 sudo firewall-cmd --reload
 ```
+```
 
 # Instalación de webserver nginx
+```bash
 ```bash
 sudo dnf install -y nginx
 sudo systemctl enable --now nginx
 sudo mkdir -p /etc/nginx/conf.d
+```
 # Copiar este comando como un solo bloque
+```bash
 sudo tee /etc/nginx/conf.d/misitio.conf > /dev/null <<'NGINX'
+```
 ```
 server {
     listen 80;
@@ -345,6 +395,7 @@ NGINX
 
 # Continuar con la configuración
 ```bash
+```bash
 sudo mkdir -p /var/www/misitio
 sudo cp index.html /var/www/misitio/index.html
 sudo semanage fcontext -a -t httpd_sys_content_t '/var/www/misitio(/.*)?' || true
@@ -353,9 +404,9 @@ sudo nginx -t
 sudo systemctl restart nginx
 sudo systemctl status nginx
 ```
+```
 
 Probar con la IP publica:
-
 
 
 
