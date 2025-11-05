@@ -226,6 +226,7 @@ wget https://github.com/jevargascr/OCI_AI_Digital_Agent/archive/refs/heads/main.
 unzip main.zip -d temp
 mv temp/OCI_AI_Digital_Agent-main/* .
 rm -rf temp
+rm -rf Images
 rm main.zip
 rm README.md
 ```
