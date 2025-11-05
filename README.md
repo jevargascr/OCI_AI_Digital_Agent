@@ -1,7 +1,6 @@
 # Creado por Jeffrey Vargas
+# Creación de Asistente Digital IA en OCI 
 
-
-Creación de Asistente Digital IA en OCI 
 I. Crear política de IA en el tenant 
 Navegamos a Identity & Security -> Policies 
 
@@ -11,6 +10,7 @@ Navegamos a Identity & Security -> Policies
 Create Policy -> Crear una nueva política en el compartment root, 
 Poner Nombre, Descripción y seleccionar Show manual editor 
 Poner las siguientes instrucciones: 
+```bash
 Allow any-user to inspect buckets in tenancy 
 Allow any-user to read objects in tenancy 
 Allow any-user to use database-tools-connections in tenancy 
@@ -18,6 +18,7 @@ Allow any-user to read database-tools-family in tenancy
 Allow any-user to read secret-family in tenancy 
 Allow any-user to {BUCKET_INSPECT, BUCKET_READ, OBJECT_INSPECT, 
 OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy 
+```
 
 ![Image -1](./Images/page2_img1.png)
 
