@@ -2,7 +2,6 @@
 
 # Page 1
 
-Conﬁdential – Oracle Internal 
 Creación de Asistente Digital IA en OCI 
 I. Crear política de IA en el tenant 
 Navegamos a Identity & Security -> Policies 
@@ -11,7 +10,6 @@ Navegamos a Identity & Security -> Policies
 
 # Page 2
 
-Conﬁdential – Oracle Internal 
 Create Policy -> Crear una nueva política en el compartment root, 
 Poner Nombre, Descripción y seleccionar Show manual editor 
 Poner las siguientes instrucciones: 
@@ -27,7 +25,6 @@ OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy
 
 # Page 3
 
-Conﬁdential – Oracle Internal 
 II. Creación de Compartment 
 Navegamos a Identity & Security -> Compartments  
  
@@ -40,7 +37,6 @@ todos los recursos de este laboratorio.
 
 # Page 4
 
-Conﬁdential – Oracle Internal 
 III. Creación de VCN 
 Navegamos a Networking -> Virtual Cloud Networks 
  
@@ -54,7 +50,6 @@ Poner Nombre y crear.
 
 # Page 5
 
-Conﬁdential – Oracle Internal 
 Una vez creada la VCN entrar a la lista de seguridad de la sub red pública y habilitar los 
 puertos TCP 80 y 8501 
  
@@ -67,7 +62,6 @@ Navegamos a Storage -> Buckets
 
 # Page 6
 
-Conﬁdential – Oracle Internal 
 Create bucket -> La creación puede realizarse con los parámetros por defecto, solo se 
 debe de agregar el nombre. 
 Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente. 
@@ -76,7 +70,6 @@ Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente
 
 # Page 7
 
-Conﬁdential – Oracle Internal 
 V. Creación de Máquina Virtual en OCI 
 Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una 
 subred pública que tenga salida a los puertos 80 y 8501 
@@ -111,7 +104,6 @@ oci os ns get
 
 # Page 8
 
-Conﬁdential – Oracle Internal 
 VI. Descargar el Sitio: 
 Se identiﬁca la página web principal y a través del comando wget se descarga el sitio. 
 Nota: Podría ser que el sitio este protegido en ese caso tendríamos que pensar en un plan 
@@ -141,7 +133,6 @@ sitio web a trabajar.
 
 # Page 9
 
-Conﬁdential – Oracle Internal 
 VII. Cargar sitio web al Bucket. 
 El comando para cargar en modo bulk el sitio a OCI es: 
 ```bash
@@ -157,7 +148,6 @@ cargados exitosamente.
 
 # Page 10
 
-Conﬁdential – Oracle Internal 
 VIII. Creación del Knowledge Base para nuestro agente. 
 Una vez que el sitio ya se encuentre cargado en nuestro Bucket procederemos a crear el 
 Knowledge Base. 
@@ -170,7 +160,6 @@ Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases
 
 # Page 11
 
-Conﬁdential – Oracle Internal 
  
 En la creación debemos de introducir un nombre, importante que el Data storage type sea 
 Object storage, marcar el check de Enable hybrid search y deﬁnir el data source 
@@ -181,7 +170,6 @@ Object storage, marcar el check de Enable hybrid search y deﬁnir el data sourc
 
 # Page 12
 
-Conﬁdential – Oracle Internal 
 En el data source poner: 
 Un nombre, habilitar Enable multi-modal parsing, seleccionar el Bucket creado 
 anteriormente, habilitar Select all in bucket y crear 
@@ -192,7 +180,6 @@ anteriormente, habilitar Select all in bucket y crear
 
 # Page 13
 
-Conﬁdential – Oracle Internal 
 IX. Creación del Agente: 
 Nota Importante: El Knowledge Bases no será relacionado al agente en este momento, ya 
 que eso se hará a través del código al igual que las instrucciones del ruteo; Además, se 
@@ -203,7 +190,6 @@ En la primera página se debe de agregar el nombre y darle Next
 
 # Page 14
 
-Conﬁdential – Oracle Internal 
 Segunda página dejarla así y Next 
  
 Tercera página dejarla igual y Next 
@@ -214,7 +200,6 @@ Tercera página dejarla igual y Next
 
 # Page 15
 
-Conﬁdential – Oracle Internal 
 Cuarta página crear agente y aceptar política 
 
 ![Image Page 15-1](./Images/page15_img1.png)
@@ -223,7 +208,6 @@ Cuarta página crear agente y aceptar política
 
 # Page 16
 
-Conﬁdential – Oracle Internal 
 X. Conﬁguración de la Aplicación  
 Para esta parte nos devolvemos a la máquina virtual previamente creada 
 # Ingresar a la máquina virtual con el comando ssh 
@@ -271,7 +255,6 @@ source IA-VENV/bin/activate
 
 # Page 17
 
-Conﬁdential – Oracle Internal 
 # Validar que las versiones sean la 11 
 ```bash
 python -V
@@ -298,7 +281,6 @@ agent_endpoint_id=
 
 # Page 18
 
-Conﬁdential – Oracle Internal 
 Notas: 
 El  knowledge_base_id es el OCID de nuestra base de datos de conocimiento y en OCI se 
 encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> OCID 
@@ -307,7 +289,6 @@ encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> 
 
 # Page 19
 
-Conﬁdential – Oracle Internal 
 El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encuentra en 
 Menu: Analytics & AI -> Generative AI Agents -> Agents -> Endpoint -> OCID 
 
@@ -323,7 +304,6 @@ vi config_agente.py
 
 # Page 20
 
-Conﬁdential – Oracle Internal 
 # Correr la aplicación y probar que el bot funciona 
 Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowledge base 
 hayan ﬁnalizado y que se completara el proceso de carga de la base de datos de 
@@ -346,7 +326,6 @@ paciencia)
 
 # Page 21
 
-Conﬁdential – Oracle Internal 
  
 # Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque 
 se termine la sesión, se deja un archivo de log que puede ser consultado después 
@@ -366,7 +345,6 @@ streamlit.log
 
 # Page 22
 
-Conﬁdential – Oracle Internal 
 XI. Conﬁguración del Sitio Web 
 La idea principal es poder embeber nuestro asistente digital en una copia local de la 
 página principal de nuestro cliente, recordemos que en pasos anteriores habíamos 
@@ -378,6 +356,7 @@ cd $HOME
 vi index.html
 ```
 Agregar este código justo antes de cerrar el body, pero antes modiﬁcar lo que está en 
+```html
 amarillo por la dirección publica de su máquina virtual. 
 <!-- Estilos para el botón flotante y el panel --> 
   <style> 
@@ -415,7 +394,6 @@ amarillo por la dirección publica de su máquina virtual.
 
 # Page 23
 
-Conﬁdential – Oracle Internal 
         bottom: calc(28px * var(--asistente-scale)); 
         right: calc(28px * var(--asistente-scale)); 
         z-index: 2147483647; 
@@ -461,12 +439,12 @@ Conﬁdential – Oracle Internal
       } 
     } 
   </script> 
+```
 
 ![Image Page 23-1](./Images/page23_img1.png)
 
 # Page 24
 
-Conﬁdential – Oracle Internal 
 # Habilitation de Networking 
 ```bash
 sudo
@@ -479,7 +457,6 @@ firewall-cmd --reload
 
 # Page 25
 
-Conﬁdential – Oracle Internal 
 # Instalación de webserver nginx 
 ```bash
 sudo
@@ -521,7 +498,6 @@ NGINX
 
 # Page 26
 
-Conﬁdential – Oracle Internal 
 # Continuar con la conﬁguración 
 ```bash
 sudo
