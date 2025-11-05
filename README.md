@@ -1,166 +1,335 @@
-# 🧠 Creación de Asistente Digital IA en OCI  
-## 👨‍💻 **Creado por Jeffrey Vargas**
+Creación de Asistente Digital IA en OCI
+Crear política de IA en el tenant
+Navegamos a Identity & Security -> Policies
 
----
 
-## 📌 **Cheat Sheet — Comandos Clave**
 
-| Acción | Comando |
-|---|---|
-Conectarse a VM | `ssh -i llave.key opc@PublicIP` |
-Instalar repositorio OL dev | `sudo dnf -y install oraclelinux-developer-release-el9` |
-Instalar OCI CLI | `sudo dnf install python39-oci-cli` |
-Configurar OCI CLI | `oci setup config` |
-Validar CLI | `oci -v` |
-Obtener Namespace | `oci os ns get` |
-Descargar sitio web | `wget …` *(ver sección)* |
-Crear venv Python 3.11 | `/usr/bin/python3.11 -m venv IA-VENV` |
-Activar venv | `source IA-VENV/bin/activate` |
-Instalar requisitos | `pip install -r requirements.txt` |
-Ejecutar UI | `streamlit run app.py` |
-Ejecución persistente | `nohup streamlit run app.py > streamlit.log 2>&1 &` |
-Detener app | `pkill -f "streamlit run app.py"` |
+Create Policy -> Crear una nueva política en el compartment root,
+Poner Nombre, Descripción y seleccionar Show manual editor
+Poner las siguientes instrucciones:
+Allow any-user to inspect buckets in tenancy
+Allow any-user to read objects in tenancy
+Allow any-user to use database-tools-connections in tenancy
+Allow any-user to read database-tools-family in tenancy
+Allow any-user to read secret-family in tenancy
+Allow any-user to {BUCKET_INSPECT, BUCKET_READ, OBJECT_INSPECT, OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy
 
----
 
-## 🚀 **Guía paso a paso con comandos**
+Creación de Compartment
+Navegamos a Identity & Security -> Compartments
 
-### 1️⃣ Conectarse a la VM
+Create compartment -> Poner Nombre y Descripción, usar este compartment para crear todos los recursos de este laboratorio.
+
+
+Creación de VCN
+Navegamos a Networking -> Virtual Cloud Networks
+
+Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto
+
+Poner Nombre y crear.
+
+Una vez creada la VCN entrar a la lista de seguridad de la sub red pública y habilitar los puertos TCP 80 y 8501
+
+Creación del Bucket
+Navegamos a Storage -> Buckets
+
+
+Create bucket -> La creación puede realizarse con los parámetros por defecto, solo se debe de agregar el nombre.
+Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente.
+
+
+Creación de Máquina Virtual en OCI
+Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una subred pública que tenga salida a los puertos 80 y 8501
+Configuración en la lista de seguridad de la subred pública:
 ```bash
+# Ingresar a la máquina virtual con el comando ssh
 ssh -i llave.key opc@PublicIP
 ```
+Realizar la instalación dentro de la maquina:
+Lo primero que realizaremos es la instalación y configuración del OCI CLI
+Cualquier duda de instalación referenciar a este link:
 
----
-
-### 2️⃣ Instalar OCI CLI
 ```bash
+# Instalar CLI
 sudo dnf -y install oraclelinux-developer-release-el9
 sudo dnf install python39-oci-cli
+# Validamos la instalación: oci -v
 oci -v
+# Realizamos la configuración:
 oci setup config
+# Probamos que traiga nuestro Object storage namespace
 oci os ns get
 ```
 
----
 
-### 3️⃣ Descargar el sitio web
+Descargar el Sitio:
+Se identifica la página web principal y a través del comando wget se descarga el sitio.
+Nota: Podría ser que el sitio este protegido en ese caso tendríamos que pensar en un plan B como descargar los archivos htmls y PDFs manualmente de las páginas de interés o modificar esta instrucción.
+Página de ejemplo:
 ```bash
 cd $HOME
-
-wget --recursive --level=3 --no-parent --adjust-extension --convert-links --domains=www.grupomutual.fi.cr,grupomutual.fi.cr --reject="jpg,jpeg,png,gif,svg,webp,ico,css,js,woff,woff2,ttf,mp4,avi,pdf" --header="Accept:text/html" --header="Accept-Language: es-CR,es;q=0.9,en;q=0.8" --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36" --execute robots=off --directory-prefix=html https://www.grupomutual.fi.cr/
+wget --recursive --level=3 --no-parent --adjust-extension --convert-links --domains= www.grupomutual.fi.cr, grupomutual.fi.cr --reject="jpg,jpeg,png,gif,svg,webp,ico,css,js,woff,woff2,ttf,mp4,avi,pdf" --header="Accept: text/html" --header="Accept-Language: es-CR,es;q=0.9,en;q=0.8" --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36" --execute robots=off --directory-prefix=html https://www.grupomutual.fi.cr/
 ```
+Notas:
+Las partes marcadas en amarillo son las que deben ser sustituidas por el nuevo sitio web a trabajar.
+El sitio quedara en la ruta /home/opc/html
 
-Copiar index:
-```bash
-cp ~/html/index.html ~/
-```
 
----
+Sacar una copia del index.html para ser modificada después y dejarlo en la ruta /home/opc/
 
-### 4️⃣ Subir sitio al bucket OCI
+
+
+
+Cargar sitio web al Bucket.
+El comando para cargar en modo bulk el sitio a OCI es:
 ```bash
 cd $HOME
-
 oci os object bulk-upload --bucket-name Bucket-MyCustomer --src-dir /home/opc/html/ --namespace axhxyz2qo8xt
 ```
+Notas:
+Las partes marcadas en amarillo son las que deben ser sustituidas por los valores de su ambiente
+Validar una vez terminado el comando que en el bucket los archivos hayan sido cargados exitosamente.
 
----
 
-### 5️⃣ Descargar la aplicación del agente
+
+Creación del Knowledge Base para nuestro agente.
+Una vez que el sitio ya se encuentre cargado en nuestro Bucket procederemos a crear el Knowledge Base.
+Nota: Se puede dejar creando este componente y avanzar con el tutorial.
+Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases
+
+
+
+En la creación debemos de introducir un nombre, importante que el Data storage type sea Object storage, marcar el check de Enable hybrid search y definir el data source
+
+
+En el data source poner:
+Un nombre, habilitar Enable multi-modal parsing, seleccionar el Bucket creado anteriormente, habilitar Select all in bucket y crear
+
+
+
+Creación del Agente:
+Nota Importante: El Knowledge Bases no será relacionado al agente en este momento, ya que eso se hará a través del código al igual que las instrucciones del ruteo; Además, se puede dejar creando este componente y avanzar con el tutorial.
+En la primera página se debe de agregar el nombre y darle Next
+
+
+
+Segunda página dejarla así y Next
+
+Tercera página dejarla igual y Next
+
+
+Cuarta página crear agente y aceptar política
+
+
+
+
+
+Configuración de la Aplicación
+Para esta parte nos devolvemos a la máquina virtual previamente creada
 ```bash
+# Ingresar a la máquina virtual con el comando ssh
+ssh -i llave.key opc@PublicIP
+#  Configurar Networking
+sudo firewall-cmd --permanent --add-port=8501/tcp
+sudo firewall-cmd --reload
+#  Descargar la aplicación desde github
 cd $HOME
-wget https://github.com/jevargascr/OCI_AI_Digital_Agent/archive/refs/heads/main.zip
+```
+wget
+```bash
 unzip main.zip -d temp
 mv temp/OCI_AI_Digital_Agent-main/* .
-rm -rf temp main.zip README.md
+rm -rf temp
+rm main.zip
+rm README.md
 ```
+Nuestro directorio $HOME se debería de ver así
 
----
-
-### 6️⃣ Instalar Python 3.11
 ```bash
+# Instalación de Python 11
 sudo dnf -y update
 sudo dnf install -y python3.11 python3.11-devel
 ```
 
----
-
-### 7️⃣ Crear ambiente virtual
 ```bash
-cd $HOME/Agente
-/usr/bin/python3.11 -m venv IA-VENV
-source IA-VENV/bin/activate
+# Creación ambiente virtual
+cd $HOME
+cd Agente
 ```
-
-Validar:
+/usr/bin/python3.11 -m venv IA-VENV
 ```bash
+source IA-VENV/bin/activate 
+# Validar que las versiones sean la 11
 python -V
 pip -V
 ```
 
-Instalar requisitos:
 ```bash
+# Instalar actualizaciones y requisitos
 cd $HOME/Agente/
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
----
-
-### 8️⃣ Configurar IDs del agente en OCI
 ```bash
+# Se debe de editar el archivo config_agent.py que se encuentra dentro de la carpeta UI para sustituir estos valores:
+```
+knowledge_base_id=
+agent_endpoint_id=
+
+
+
+Notas:
+El  knowledge_base_id es el OCID de nuestra base de datos de conocimiento y en OCI se encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> OCID
+
+El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encuentra en Menu: Analytics & AI -> Generative AI Agents -> Agents -> Endpoint -> OCID
+
+
+```bash
+# Editar
 cd $HOME/Agente/UI/
 vi config_agente.py
 ```
 
----
 
-### 9️⃣ Ejecutar aplicación
+# Correr la aplicación y probar que el bot funciona
+Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowledge base hayan finalizado y que se completara el proceso de carga de la base de datos de conocimiento (el Ingestion job debe de estar Completado).
+
 ```bash
+# Prueba Inicial
 cd $HOME/Agente/UI/
 streamlit run app.py
 ```
 
----
+Abrir dirección Externa, se debería de ver así (inicia con un proceso de instalación tener paciencia)
 
-### 🔟 Mantener ejecución
+
 ```bash
+# Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque se termine la sesión, se deja un archivo de log que puede ser consultado después
+cd $HOME/Agente/UI/
 nohup streamlit run app.py > streamlit.log 2>&1 &
-```
-
-Detener:
-```bash
+# En caso de necesitar matar el proceso
+cd $HOME/Agente/UI/
 pkill -f "streamlit run app.py"
 rm streamlit.log
 ```
 
----
+Configuración del Sitio Web
+La idea principal es poder embeber nuestro asistente digital en una copia local de la página principal de nuestro cliente, recordemos que en pasos anteriores habíamos realizado una copia en $HOME
+```bash
+# Modificación del index.html
+```
+Se debe de modificar el index.html
+```bash
+cd $HOME
+vi index.html
+```
+Agregar este código justo antes de cerrar el body, pero antes modificar lo que está en amarillo por la dirección publica de su máquina virtual.
+<!-- Estilos para el botón flotante y el panel -->
+  <style>
+    :root {
+        --asistente-scale: 0.9;  /* Escala general del botón y panel (ajústala libremente) */
+    }
 
-### 1️⃣1️⃣ Configurar NGINX para servir Web + Bot
+    /* Contenedor del panel flotante (iframe) */
+    #asistente-container {
+        display: none;
+        position: fixed;
+        right: calc(28px * var(--asistente-scale));
+        bottom: calc(95px * var(--asistente-scale)); /* 🔹 Se coloca justo encima del botón */
+        width: calc(450px * var(--asistente-scale)); /* ← ancho del iframe */
+        height: calc(650px * var(--asistente-scale));  /* ← alto del iframe*/
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 16px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+        z-index: 2147483646;
+        overflow: hidden;
+    }
+
+    #asistente-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Botón flotante */
+    #asistente-launcher {
+        position: fixed;
+        bottom: calc(28px * var(--asistente-scale));
+        right: calc(28px * var(--asistente-scale));
+        z-index: 2147483647;
+        background: linear-gradient(145deg, #0055B8 0%, #0072E3 100%);
+        color: #fff;
+        font-weight: 700;
+        font-size: calc(18px * var(--asistente-scale));
+        padding: calc(18px * var(--asistente-scale)) calc(30px * var(--asistente-scale));
+        border: none;
+        border-radius: calc(50px * var(--asistente-scale));
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(0, 85, 184, 0.35);
+        transition: all 0.25s ease;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
+    }
+
+    #asistente-launcher:hover {
+        transform: scale(1.06);
+        box-shadow: 0 10px 25px rgba(0, 85, 184, 0.45);
+        background: linear-gradient(145deg, #0072E3 0%, #0093FF 100%);
+    }
+  </style>
+  <!-- Contenedor del iframe oculto -->
+  <div id="asistente-container">
+    <iframe id="asistente-iframe" src=""></iframe>
+  </div>
+
+  <!-- Botón flotante (emoji correcto en UTF-8; alternativa con entity: &#129302;) -->
+  <button id="asistente-launcher" onclick="toggleAsistente()">🤖 Asistente Digital</button>
+  <!-- Lógica para mostrar/ocultar el iframe -->
+  <script>
+    function toggleAsistente() {
+      const container = document.getElementById("asistente-container");
+      const iframe = document.getElementById("asistente-iframe");
+      const visible = container.style.display !== "none" && container.style.display !== "";
+      if (!visible) {
+        // Cambia la URL a tu destino (Open WebUI o tu runner embebido)
+        iframe.src = "http://localhost:8501";
+        container.style.display = "block";
+      } else {
+        container.style.display = "none";
+        iframe.src = ""; // libera recursos
+      }
+    }
+  </script>
+
+
+# Habilitation de Networking
 ```bash
 sudo firewall-cmd --permanent --add-port=8080/tcp
 sudo firewall-cmd --permanent --add-service=http
 sudo firewall-cmd --reload
 ```
 
-Instalar:
+# Instalación de webserver nginx
 ```bash
 sudo dnf install -y nginx
 sudo systemctl enable --now nginx
 sudo mkdir -p /etc/nginx/conf.d
-```
-
-Proxy config:
-```bash
+# Copiar este comando como un solo bloque
 sudo tee /etc/nginx/conf.d/misitio.conf > /dev/null <<'NGINX'
+```
 server {
     listen 80;
     server_name _;
+
     root /var/www/misitio;
     index index.html;
+
     location / {
         try_files $uri $uri/ =404;
     }
+
+    # Proxy a Streamlit en /app/
     location /app/ {
         proxy_pass http://127.0.0.1:8501/;
         proxy_http_version 1.1;
@@ -173,9 +342,8 @@ server {
     }
 }
 NGINX
-```
 
-Mover web:
+# Continuar con la configuración
 ```bash
 sudo mkdir -p /var/www/misitio
 sudo cp index.html /var/www/misitio/index.html
@@ -186,6 +354,10 @@ sudo systemctl restart nginx
 sudo systemctl status nginx
 ```
 
----
+Probar con la IP publica:
 
-🎯 **Listo! README Final para tu repositorio.**
+
+
+
+
+
