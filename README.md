@@ -1,12 +1,13 @@
 # Creación de Asistente Digital IA en OCI - Jeffrey Vargas Valle
 
-I. Crear política de IA en el tenant 
+## I. Crear política de IA en el tenant   
 Navegamos a Identity & Security -> Policies 
 
 ![Image -1](./Images/page1_img1.png)
 
 
-Create Policy -> Crear una nueva política en el compartment root, 
+Create Policy  
+Crear una nueva política en el compartment root, 
 Poner Nombre, Descripción y seleccionar Show manual editor 
 Poner las siguientes instrucciones: 
 ```bash
@@ -22,7 +23,7 @@ OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy
 ![Image -1](./Images/page2_img1.png)
 
 
-II. Creación de Compartment 
+## II. Creación de Compartment 
 Navegamos a Identity & Security -> Compartments  
  
 Create compartment -> Poner Nombre y Descripción, usar este compartment para crear 
@@ -33,7 +34,7 @@ todos los recursos de este laboratorio.
 ![Image -2](./Images/page3_img2.png)
 
 
-III. Creación de VCN 
+## III. Creación de VCN  
 Navegamos a Networking -> Virtual Cloud Networks 
  
 Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto 
@@ -47,11 +48,11 @@ Poner Nombre y crear.
 
 Una vez creada la VCN entrar a la lista de seguridad de la sub red pública y habilitar los 
 puertos TCP 80 y 8501 
- 
-IV. Creación del Bucket 
-Navegamos a Storage -> Buckets 
 
 ![Image -1](./Images/page5_img1.png)
+ 
+## IV. Creación del Bucket 
+Navegamos a Storage -> Buckets 
 
 ![Image -2](./Images/page5_img2.png)
 
@@ -63,11 +64,11 @@ Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente
 ![Image -1](./Images/page6_img1.png)
 
 
-V. Creación de Máquina Virtual en OCI 
+## V. Creación de Máquina Virtual en OCI 
 Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una 
 subred pública que tenga salida a los puertos 80 y 8501 
 Conﬁguración en la lista de seguridad de la subred pública: 
-# Ingresar a la máquina virtual con el comando ssh 
+### Ingresar a la máquina virtual con el comando ssh 
 ```bash
 ssh -i llave.key opc@PublicIP
 ```
@@ -75,28 +76,28 @@ Realizar la instalación dentro de la maquina:
 Lo primero que realizaremos es la instalación y conﬁguración del OCI CLI 
 Cualquier duda de instalación referenciar a este link:  
 https://docs.oracle.com/es-ww/iaas/Content/API/SDKDocs/cliinstall.htm 
-# Instalar CLI 
+### Instalar CLI 
 ```bash
 sudo
 dnf -y install oraclelinux-developer-release-el9
 sudo
 dnf install python39-oci-cli
 ```
-# Validamos la instalación: oci -v 
+### Validamos la instalación: oci -v 
 ```bash
 oci -v
 ```
-# Realizamos la conﬁguración: 
+### Realizamos la conﬁguración: 
 ```bash
 oci setup config
 ```
-# Probamos que traiga nuestro Object storage namespace 
+### Probamos que traiga nuestro Object storage namespace 
 ```bash
 oci os ns get
 ```
 
 
-VI. Descargar el Sitio: 
+## VI. Descargar el Sitio: 
 Se identiﬁca la página web principal y a través del comando wget se descarga el sitio. 
 Nota: Podría ser que el sitio este protegido en ese caso tendríamos que pensar en un plan 
 B como descargar los archivos htmls y PDFs manualmente de las páginas de interés o 
