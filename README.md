@@ -1,14 +1,12 @@
 # Creado por Jeffrey Vargas
 
-# Page 1
 
 Creación de Asistente Digital IA en OCI 
 I. Crear política de IA en el tenant 
 Navegamos a Identity & Security -> Policies 
 
-![Image Page 1-1](./Images/page1_img1.png)
+![Image -1](./Images/page1_img1.png)
 
-# Page 2
 
 Create Policy -> Crear una nueva política en el compartment root, 
 Poner Nombre, Descripción y seleccionar Show manual editor 
@@ -21,9 +19,8 @@ Allow any-user to read secret-family in tenancy
 Allow any-user to {BUCKET_INSPECT, BUCKET_READ, OBJECT_INSPECT, 
 OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy 
 
-![Image Page 2-1](./Images/page2_img1.png)
+![Image -1](./Images/page2_img1.png)
 
-# Page 3
 
 II. Creación de Compartment 
 Navegamos a Identity & Security -> Compartments  
@@ -31,11 +28,10 @@ Navegamos a Identity & Security -> Compartments
 Create compartment -> Poner Nombre y Descripción, usar este compartment para crear 
 todos los recursos de este laboratorio. 
 
-![Image Page 3-1](./Images/page3_img1.png)
+![Image -1](./Images/page3_img1.png)
 
-![Image Page 3-2](./Images/page3_img2.png)
+![Image -2](./Images/page3_img2.png)
 
-# Page 4
 
 III. Creación de VCN 
 Navegamos a Networking -> Virtual Cloud Networks 
@@ -44,11 +40,10 @@ Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto
  
 Poner Nombre y crear. 
 
-![Image Page 4-1](./Images/page4_img1.png)
+![Image -1](./Images/page4_img1.png)
 
-![Image Page 4-2](./Images/page4_img2.png)
+![Image -2](./Images/page4_img2.png)
 
-# Page 5
 
 Una vez creada la VCN entrar a la lista de seguridad de la sub red pública y habilitar los 
 puertos TCP 80 y 8501 
@@ -56,19 +51,17 @@ puertos TCP 80 y 8501
 IV. Creación del Bucket 
 Navegamos a Storage -> Buckets 
 
-![Image Page 5-1](./Images/page5_img1.png)
+![Image -1](./Images/page5_img1.png)
 
-![Image Page 5-2](./Images/page5_img2.png)
+![Image -2](./Images/page5_img2.png)
 
-# Page 6
 
 Create bucket -> La creación puede realizarse con los parámetros por defecto, solo se 
 debe de agregar el nombre. 
 Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente. 
 
-![Image Page 6-1](./Images/page6_img1.png)
+![Image -1](./Images/page6_img1.png)
 
-# Page 7
 
 V. Creación de Máquina Virtual en OCI 
 Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una 
@@ -102,7 +95,6 @@ oci setup config
 oci os ns get
 ```
 
-# Page 8
 
 VI. Descargar el Sitio: 
 Se identiﬁca la página web principal y a través del comando wget se descarga el sitio. 
@@ -127,11 +119,10 @@ sitio web a trabajar.
 • Sacar una copia del index.html para ser modiﬁcada después y dejarlo en la ruta 
 /home/opc/ 
 
-![Image Page 8-1](./Images/page8_img1.png)
+![Image -1](./Images/page8_img1.png)
 
-![Image Page 8-2](./Images/page8_img2.png)
+![Image -2](./Images/page8_img2.png)
 
-# Page 9
 
 VII. Cargar sitio web al Bucket. 
 El comando para cargar en modo bulk el sitio a OCI es: 
@@ -146,7 +137,6 @@ de su ambiente
 • Validar una vez terminado el comando que en el bucket los archivos hayan sido 
 cargados exitosamente. 
 
-# Page 10
 
 VIII. Creación del Knowledge Base para nuestro agente. 
 Una vez que el sitio ya se encuentre cargado en nuestro Bucket procederemos a crear el 
@@ -154,31 +144,28 @@ Knowledge Base.
 Nota: Se puede dejar creando este componente y avanzar con el tutorial. 
 Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases 
 
-![Image Page 10-1](./Images/page10_img1.png)
+![Image -1](./Images/page10_img1.png)
 
-![Image Page 10-2](./Images/page10_img2.png)
+![Image -2](./Images/page10_img2.png)
 
-# Page 11
 
  
 En la creación debemos de introducir un nombre, importante que el Data storage type sea 
 Object storage, marcar el check de Enable hybrid search y deﬁnir el data source 
 
-![Image Page 11-1](./Images/page11_img1.png)
+![Image -1](./Images/page11_img1.png)
 
-![Image Page 11-2](./Images/page11_img2.png)
+![Image -2](./Images/page11_img2.png)
 
-# Page 12
 
 En el data source poner: 
 Un nombre, habilitar Enable multi-modal parsing, seleccionar el Bucket creado 
 anteriormente, habilitar Select all in bucket y crear 
 
-![Image Page 12-1](./Images/page12_img1.png)
+![Image -1](./Images/page12_img1.png)
 
-![Image Page 12-2](./Images/page12_img2.png)
+![Image -2](./Images/page12_img2.png)
 
-# Page 13
 
 IX. Creación del Agente: 
 Nota Importante: El Knowledge Bases no será relacionado al agente en este momento, ya 
@@ -186,27 +173,24 @@ que eso se hará a través del código al igual que las instrucciones del ruteo;
 puede dejar creando este componente y avanzar con el tutorial. 
 En la primera página se debe de agregar el nombre y darle Next 
 
-![Image Page 13-1](./Images/page13_img1.png)
+![Image -1](./Images/page13_img1.png)
 
-# Page 14
 
 Segunda página dejarla así y Next 
  
 Tercera página dejarla igual y Next 
 
-![Image Page 14-1](./Images/page14_img1.png)
+![Image -1](./Images/page14_img1.png)
 
-![Image Page 14-2](./Images/page14_img2.png)
+![Image -2](./Images/page14_img2.png)
 
-# Page 15
 
 Cuarta página crear agente y aceptar política 
 
-![Image Page 15-1](./Images/page15_img1.png)
+![Image -1](./Images/page15_img1.png)
 
-![Image Page 15-2](./Images/page15_img2.png)
+![Image -2](./Images/page15_img2.png)
 
-# Page 16
 
 X. Conﬁguración de la Aplicación  
 Para esta parte nos devolvemos a la máquina virtual previamente creada 
@@ -251,9 +235,8 @@ cd Agente
 source IA-VENV/bin/activate
 ```
 
-![Image Page 16-1](./Images/page16_img1.png)
+![Image -1](./Images/page16_img1.png)
 
-# Page 17
 
 # Validar que las versiones sean la 11 
 ```bash
@@ -275,19 +258,17 @@ para sustituir estos valores:
 knowledge_base_id= 
 agent_endpoint_id= 
 
-![Image Page 17-1](./Images/page17_img1.png)
+![Image -1](./Images/page17_img1.png)
 
-![Image Page 17-2](./Images/page17_img2.png)
+![Image -2](./Images/page17_img2.png)
 
-# Page 18
 
 Notas: 
 El  knowledge_base_id es el OCID de nuestra base de datos de conocimiento y en OCI se 
 encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> OCID 
 
-![Image Page 18-1](./Images/page18_img1.png)
+![Image -1](./Images/page18_img1.png)
 
-# Page 19
 
 El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encuentra en 
 Menu: Analytics & AI -> Generative AI Agents -> Agents -> Endpoint -> OCID 
@@ -298,11 +279,10 @@ cd $HOME/Agente/UI/
 vi config_agente.py
 ```
 
-![Image Page 19-1](./Images/page19_img1.png)
+![Image -1](./Images/page19_img1.png)
 
-![Image Page 19-2](./Images/page19_img2.png)
+![Image -2](./Images/page19_img2.png)
 
-# Page 20
 
 # Correr la aplicación y probar que el bot funciona 
 Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowledge base 
@@ -318,13 +298,12 @@ streamlit run app.py
 Abrir dirección Externa, se debería de ver así (inicia con un proceso de instalación tener 
 paciencia) 
 
-![Image Page 20-1](./Images/page20_img1.png)
+![Image -1](./Images/page20_img1.png)
 
-![Image Page 20-2](./Images/page20_img2.png)
+![Image -2](./Images/page20_img2.png)
 
-![Image Page 20-3](./Images/page20_img3.png)
+![Image -3](./Images/page20_img3.png)
 
-# Page 21
 
  
 # Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque 
@@ -343,7 +322,6 @@ rm
 streamlit.log
 ```
 
-# Page 22
 
 XI. Conﬁguración del Sitio Web 
 La idea principal es poder embeber nuestro asistente digital en una copia local de la 
@@ -390,9 +368,8 @@ amarillo por la dirección publica de su máquina virtual.
     #asistente-launcher { 
         position: fixed; 
 
-![Image Page 22-1](./Images/page22_img1.png)
+![Image -1](./Images/page22_img1.png)
 
-# Page 23
 
         bottom: calc(28px * var(--asistente-scale)); 
         right: calc(28px * var(--asistente-scale)); 
@@ -441,9 +418,8 @@ amarillo por la dirección publica de su máquina virtual.
   </script> 
 ```
 
-![Image Page 23-1](./Images/page23_img1.png)
+![Image -1](./Images/page23_img1.png)
 
-# Page 24
 
 # Habilitation de Networking 
 ```bash
@@ -455,7 +431,6 @@ sudo
 firewall-cmd --reload
 ```
 
-# Page 25
 
 # Instalación de webserver nginx 
 ```bash
@@ -496,7 +471,6 @@ server {
 } 
 NGINX 
 
-# Page 26
 
 # Continuar con la conﬁguración 
 ```bash
@@ -518,4 +492,4 @@ systemctl status nginx
 Probar con la IP publica: 
 http://64.181.201.189 
 
-![Image Page 26-1](./Images/page26_img1.png)
+![Image -1](./Images/page26_img1.png)
