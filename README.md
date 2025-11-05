@@ -1,14 +1,30 @@
 # Creación de Asistente Digital IA en OCI - Jeffrey Vargas Valle
 
-## I. Crear política de IA en el tenant   
+## I. Introducción
+En este laboratorio construiremos un asistente digital inteligente embebido dentro del sitio web de un cliente, utilizando las capacidades de Oracle Cloud Infrastructure (OCI) y sus servicios de IA Generativa y Recuperación Aumentada por Búsqueda (RAG).  
+El objetivo es guiar paso a paso en la creación de un chatbot corporativo moderno, capaz de responder preguntas basadas en la información del negocio, documentación existente y contenido público del sitio web del cliente.  
+  
+Para lograrlo, realizaremos las siguientes tareas:  
+- Crear los componentes fundamentales en OCI Generative AI Agents Service  
+- Aprovisionar un bucket y cargar contenido web como fuente de conocimiento  
+- Construir un Knowledge Base habilitando búsqueda híbrida y capacidades multimodales  
+- Crear un Agente de IA que pueda consultar la información cargada  
+- Implementar la lógica y la interfaz web para consumir el agente desde una aplicación Python/Streamlit  
+- Embeber el chatbot dentro de una copia del sitio web del cliente para una experiencia integrada
+  
+Al finalizar, tendrás un prototipo funcional que demuestra cómo una organización puede activar capacidades conversacionales avanzadas sobre su información corporativa de forma segura, escalable y con una experiencia de usuario moderna.
+Este laboratorio está diseñado para equipos técnicos, arquitectos de soluciones y desarrolladores que buscan acelerar la adopción de IA generativa aplicada al negocio, aprovechando los servicios administrados y capacidades empresariales de OCI.
+
+### Arquitectura propuesta:  
+<img src="./Images/page1_img0.png" width="1024">
+
+## II. Crear política de IA en el tenant   
 Navegamos a Identity & Security -> Policies 
 
-![Image -1](./Images/page1_img1.png)
-
+<img src="./Images/page1_img1.png" width="550">
 
 Create Policy  
-Crear una nueva política en el compartment root, 
-Poner Nombre, Descripción y seleccionar Show manual editor 
+Crear una nueva política en el compartment root y poner: Nombre, Descripción y seleccionar Show manual editor  
 Poner las siguientes instrucciones: 
 ```bash
 Allow any-user to inspect buckets in tenancy 
@@ -23,25 +39,23 @@ OBJECT_READ, OBJECT_CREATE, OBJECT_OVERWRITE, PAR_MANAGE} in tenancy
 ![Image -1](./Images/page2_img1.png)
 
 
-## II. Creación de Compartment 
+## III. Creación de Compartment 
 Navegamos a Identity & Security -> Compartments  
  
 Create compartment -> Poner Nombre y Descripción, usar este compartment para crear 
 todos los recursos de este laboratorio. 
 
-![Image -1](./Images/page3_img1.png)
+<img src="./Images/page3_img1.png" width="550">
 
 ![Image -2](./Images/page3_img2.png)
 
 
-## III. Creación de VCN  
+## IV. Creación de VCN  
 Navegamos a Networking -> Virtual Cloud Networks 
  
-Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto 
- 
-Poner Nombre y crear. 
+Crear una nueva VCN a partir del Wizard y dejamos los valores por defecto solo poner el Nombre y crear. 
 
-![Image -1](./Images/page4_img1.png)
+<img src="./Images/page4_img1.png" width="550">
 
 ![Image -2](./Images/page4_img2.png)
 
@@ -51,23 +65,23 @@ puertos TCP 80 y 8501
 
 ![Image -1](./Images/page5_img1.png)
  
-## IV. Creación del Bucket 
+## V. Creación del Bucket 
 Navegamos a Storage -> Buckets 
 
-![Image -2](./Images/page5_img2.png)
+<img src="./Images/page5_img2.png" width="750">
 
 
 Create bucket -> La creación puede realizarse con los parámetros por defecto, solo se 
 debe de agregar el nombre. 
 Este Bucket contendrá el sitio web que descargaremos y subiremos posteriormente. 
 
-![Image -1](./Images/page6_img1.png)
+<img src="./Images/page6_img1.png" width="750">
 
 
-## V. Creación de Máquina Virtual en OCI 
+## VI. Creación de Máquina Virtual en OCI 
 Crear una máquina virtual con sistema operativo OL9, procesador Intel o AMD y en una 
 subred pública que tenga salida a los puertos 80 y 8501 
-Conﬁguración en la lista de seguridad de la subred pública: 
+
 ### Ingresar a la máquina virtual con el comando ssh 
 ```bash
 ssh -i llave.key opc@PublicIP
@@ -78,10 +92,8 @@ Cualquier duda de instalación referenciar a este link:
 https://docs.oracle.com/es-ww/iaas/Content/API/SDKDocs/cliinstall.htm 
 ### Instalar CLI 
 ```bash
-sudo
-dnf -y install oraclelinux-developer-release-el9
-sudo
-dnf install python39-oci-cli
+sudo dnf -y install oraclelinux-developer-release-el9
+sudo dnf install python39-oci-cli
 ```
 ### Validamos la instalación: oci -v 
 ```bash
@@ -97,52 +109,55 @@ oci os ns get
 ```
 
 
-## VI. Descargar el Sitio: 
-Se identiﬁca la página web principal y a través del comando wget se descarga el sitio. 
+## VII. Descargar el Sitio: 
+Se identiﬁca la página web principal y a través del comando wget se descarga el sitio.  
 Nota: Podría ser que el sitio este protegido en ese caso tendríamos que pensar en un plan 
 B como descargar los archivos htmls y PDFs manualmente de las páginas de interés o 
-modiﬁcar esta instrucción. 
+modiﬁcar esta instrucción.  
 Página de ejemplo: https://www.mycustomer.com 
 ```bash
 cd $HOME
-wget --recursive --level=3 --no-parent --adjust-extension --convert-links --domains=
+wget --recursive --level=3 --no-parent --adjust-extension --convert-links \
+  --domains=www.mycustomer.com,mycustomer.com \
+  --reject="jpg,jpeg,png,gif,svg,webp,ico,css,js,woff,woff2,ttf,mp4,avi,pdf" \
+  --header="Accept: text/html" \
+  --header="Accept-Language: es-CR,es;q=0.9,en;q=0.8" \
+  --user-agent="Mozilla/5.0" \
+  --execute robots=off \
+  --directory-prefix=html \
+    https://www.mycustomer.com
+
+> ⚠️ Reemplazar `mycustomer.com` por el dominio del cliente
+
 ```
-www.grupomutual.fi.cr, grupomutual.fi.cr --
-reject="jpg,jpeg,png,gif,svg,webp,ico,css,js,woff,woff2,ttf,mp4,avi,pdf" --header="Accept: 
-text/html" --header="Accept-Language: es-CR,es;q=0.9,en;q=0.8" --user-agent="Mozilla/5.0 (Windows 
-NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0 Safari/537.36" --execute 
-robots=off --directory-prefix=html https://www.grupomutual.fi.cr/  
+
 Notas:  
-• Las partes marcadas en amarillo son las que deben ser sustituidas por el nuevo 
-sitio web a trabajar. 
-• El sitio quedara en la ruta /home/opc/html 
+• Se deben ser sustituidas el dominio mycustomer.com por el nuevo sitio web a trabajar.  
+• El sitio quedara en la ruta /home/opc/html  
+• Sacar una copia del index.html para ser modiﬁcada después y dejarlo en la ruta /home/opc/  
 
-• Sacar una copia del index.html para ser modiﬁcada después y dejarlo en la ruta 
-/home/opc/ 
+<img src="./Images/page8_img1.png" width="350">
 
-![Image -1](./Images/page8_img1.png)
-
-![Image -2](./Images/page8_img2.png)
+<img src="./Images/page8_img2.png" width="350">
 
 
-VII. Cargar sitio web al Bucket. 
+## VIII. Cargar sitio web al Bucket. 
 El comando para cargar en modo bulk el sitio a OCI es: 
 ```bash
 cd $HOME
-oci os object bulk-upload --bucket-name Bucket-MyCustomer --src-dir
+oci os object bulk-upload --bucket-name Bucket-MyCustomer --src-dir /home/opc/html/ --namespace axhxyz2qo8xt 
 ```
-/home/opc/html/ --namespace axhxyz2qo8xt 
+
 Notas:  
-• Las partes marcadas en amarillo son las que deben ser sustituidas por los valores 
-de su ambiente 
+• Se debe de remplazar el valor del nombre del bucket y el namespace  
 • Validar una vez terminado el comando que en el bucket los archivos hayan sido 
 cargados exitosamente. 
 
 
-VIII. Creación del Knowledge Base para nuestro agente. 
+## XI. Creación del Knowledge Base para nuestro agente. 
 Una vez que el sitio ya se encuentre cargado en nuestro Bucket procederemos a crear el 
-Knowledge Base. 
-Nota: Se puede dejar creando este componente y avanzar con el tutorial. 
+Knowledge Base.  
+Nota: Se puede dejar creando este componente y avanzar con el tutorial.  
 Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases 
 
 ![Image -1](./Images/page10_img1.png)
@@ -168,20 +183,20 @@ anteriormente, habilitar Select all in bucket y crear
 ![Image -2](./Images/page12_img2.png)
 
 
-IX. Creación del Agente: 
+## X. Creación del Agente: 
 Nota Importante: El Knowledge Bases no será relacionado al agente en este momento, ya 
 que eso se hará a través del código al igual que las instrucciones del ruteo; Además, se 
-puede dejar creando este componente y avanzar con el tutorial. 
+puede dejar creando este componente y avanzar con el tutorial.   
 En la primera página se debe de agregar el nombre y darle Next 
 
 ![Image -1](./Images/page13_img1.png)
 
 
 Segunda página dejarla así y Next 
- 
-Tercera página dejarla igual y Next 
 
 ![Image -1](./Images/page14_img1.png)
+ 
+Tercera página dejarla igual y Next 
 
 ![Image -2](./Images/page14_img2.png)
 
@@ -193,20 +208,18 @@ Cuarta página crear agente y aceptar política
 ![Image -2](./Images/page15_img2.png)
 
 
-X. Conﬁguración de la Aplicación  
+## XI. Conﬁguración de la Aplicación  
 Para esta parte nos devolvemos a la máquina virtual previamente creada 
-# Ingresar a la máquina virtual con el comando ssh 
+### Ingresar a la máquina virtual con el comando ssh 
 ```bash
 ssh -i llave.key opc@PublicIP
 ```
-#  Conﬁgurar Networking 
+###  Conﬁgurar Networking 
 ```bash
-sudo
-firewall-cmd --permanent --add-port=8501/tcp
-sudo
-firewall-cmd --reload
+sudo firewall-cmd --permanent --add-port=8501/tcp
+sudo firewall-cmd --reload
 ```
-#  Descargar la aplicación desde github 
+###  Descargar la aplicación desde github 
 ```bash
 cd $HOME
 wget https://github.com/jevargascr/OCI_AI_Digital_Agent/archive/refs/heads/main.zip
@@ -217,49 +230,45 @@ rm main.zip
 rm README.md
 ```
 Nuestro directorio $HOME se debería de ver así 
+
+<img src="./Images/page16_img1.png" width="250">
  
-# Instalación de Python 11 
+### Instalación de Python 11 
 ```bash
-sudo
-dnf -y update
-sudo
-dnf install -y python3.11 python3.11-devel
+sudo dnf -y update
+sudo dnf install -y python3.11 python3.11-devel
 ```
  
-# Creación ambiente virtual 
+### Creación ambiente virtual 
 ```bash
 cd $HOME
 cd Agente
-```
-/usr/bin/python3.11 -m venv IA-VENV 
-```bash
+/usr/bin/python3.11 -m venv IA-VENV
 source IA-VENV/bin/activate
 ```
 
-![Image -1](./Images/page16_img1.png)
 
-
-# Validar que las versiones sean la 11 
+### Validar que las versiones sean la 11 
 ```bash
 python -V
 pip -V
 ```
- 
-# Instalar actualizaciones y requisitos 
+![Image -1](./Images/page17_img1.png)
+
+
+### Instalar actualizaciones y requisitos 
 ```bash
 cd $HOME/Agente/
-python -m
-pip install --upgrade
-pip
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
  
-# Se debe de editar el archivo conﬁg_agent.py que se encuentra dentro de la carpeta UI 
-para sustituir estos valores: 
-knowledge_base_id= 
-agent_endpoint_id= 
+Se debe de editar el archivo conﬁg_agent.py que se encuentra dentro de la carpeta UI 
+para sustituir estos valores:   
+**knowledge_base_id=**  
+**agent_endpoint_id=**  
 
-![Image -1](./Images/page17_img1.png)
+
 
 ![Image -2](./Images/page17_img2.png)
 
@@ -274,23 +283,26 @@ encuentra en Menu: Analytics & AI -> Generative AI Agents -> Knowledge Bases -> 
 El  agent_endpoint_id es el OCID del Endpoint de nuestro agente y en OCI se encuentra en 
 Menu: Analytics & AI -> Generative AI Agents -> Agents -> Endpoint -> OCID 
 
-# Editar 
-```bash
-cd $HOME/Agente/UI/
-vi config_agente.py
-```
 
 ![Image -1](./Images/page19_img1.png)
 
 ![Image -2](./Images/page19_img2.png)
 
 
-# Correr la aplicación y probar que el bot funciona 
+### Editar 
+```bash
+cd $HOME/Agente/UI/
+vi config_agente.py
+```
+
+### Correr la aplicación y probar que el bot funciona 
 Nota: Antes de ejecutar la app garantizarse que la creación del Agent y Knowledge base 
 hayan ﬁnalizado y que se completara el proceso de carga de la base de datos de 
 conocimiento (el Ingestion job debe de estar Completado). 
  
-# Prueba Inicial 
+![Image -1](./Images/page20_img1.png)
+
+### Prueba Inicial 
 ```bash
 cd $HOME/Agente/UI/
 streamlit run app.py
@@ -299,42 +311,37 @@ streamlit run app.py
 Abrir dirección Externa, se debería de ver así (inicia con un proceso de instalación tener 
 paciencia) 
 
-![Image -1](./Images/page20_img1.png)
-
-![Image -2](./Images/page20_img2.png)
+<img src="./Images/page20_img2.png" width="650">
 
 ![Image -3](./Images/page20_img3.png)
 
 
  
-# Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque 
+### Una vez que el Bot sea probado lo podemos correr y que se mantenga corriendo, aunque 
 se termine la sesión, se deja un archivo de log que puede ser consultado después 
 ```bash
 cd $HOME/Agente/UI/
-nohup
-streamlit run app.py >
-streamlit.log 2>&1 &
+nohup streamlit run app.py > streamlit.log 2>&1 &
 ```
-# En caso de necesitar matar el proceso 
+### En caso de necesitar matar el proceso 
 ```bash
 cd $HOME/Agente/UI/
 pkill -f "streamlit run app.py"
-rm
-streamlit.log
+rm streamlit.log
 ```
 
 
-XI. Conﬁguración del Sitio Web 
+## XII. Conﬁguración del Sitio Web 
 La idea principal es poder embeber nuestro asistente digital en una copia local de la 
 página principal de nuestro cliente, recordemos que en pasos anteriores habíamos 
 realizado una copia en $HOME 
-# Modiﬁcación del index.html 
+### Modiﬁcación del index.html 
 Se debe de modiﬁcar el index.html 
 ```bash
 cd $HOME
 vi index.html
 ```
-Agregar este código justo antes de cerrar el body, pero antes modiﬁcar lo que está en 
+Agregar este código justo antes de cerrar el body, pero antes modiﬁcar la parte de http://localhost:8501 por la ip publica de la maquina virtual 
 ```html
 amarillo por la dirección publica de su máquina virtual. 
 <!-- Estilos para el botón flotante y el panel --> 
@@ -419,34 +426,25 @@ amarillo por la dirección publica de su máquina virtual.
   </script> 
 ```
 
-![Image -1](./Images/page23_img1.png)
 
-
-# Habilitation de Networking 
+### Habilitation de Networking 
 ```bash
-sudo
-firewall-cmd --permanent --add-port=8080/tcp
-sudo
-firewall-cmd --permanent --add-service=http
-sudo
-firewall-cmd --reload
+sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
 ```
 
 
-# Instalación de webserver nginx 
+### Instalación de webserver nginx 
 ```bash
-sudo
-dnf install -y nginx
-sudo
-systemctl enable --now nginx
-sudo
-mkdir -p /etc/nginx/conf.d
+sudo dnf install -y nginx
+sudo systemctl enable --now nginx
+sudo mkdir -p /etc/nginx/conf.d
 ```
-# Copiar este comando como un solo bloque 
+### Copiar este comando como un solo bloque 
 ```bash
-sudo
-tee /etc/nginx/conf.d/misitio.conf > /dev/null <<'NGINX'
-```
+sudo tee /etc/nginx/conf.d/misitio.conf > /dev/null <<'NGINX'
+
 server { 
     listen 80; 
     server_name _; 
@@ -471,23 +469,17 @@ server {
     } 
 } 
 NGINX 
+```
 
-
-# Continuar con la conﬁguración 
+### Continuar con la conﬁguración 
 ```bash
-sudo
-mkdir -p /var/www/misitio
-sudo
-cp index.html /var/www/misitio/index.html
-sudo
-semanage fcontext -a -t httpd_sys_content_t '/var/www/misitio(/.*)?' || true
-sudo
-restorecon -Rv /var/www/misitio
+sudo mkdir -p /var/www/misitio
+sudo cp index.html /var/www/misitio/index.html
+sudo semanage fcontext -a -t httpd_sys_content_t '/var/www/misitio(/.*)?' || true
+sudo restorecon -Rv /var/www/misitio
 sudo nginx -t
-sudo
-systemctl restart nginx
-sudo
-systemctl status nginx
+sudo systemctl restart nginx
+sudo systemctl status nginx
 ```
  
 Probar con la IP publica: 
