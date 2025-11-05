@@ -1,5 +1,4 @@
-# Creado por Jeffrey Vargas
-# Creación de Asistente Digital IA en OCI 
+# Creación de Asistente Digital IA en OCI - Jeffrey Vargas Valle
 
 I. Crear política de IA en el tenant 
 Navegamos a Identity & Security -> Policies 
