@@ -344,7 +344,6 @@ vi index.html
 ```
 Agregar este código justo antes de cerrar el body, pero antes modiﬁcar la parte de http://localhost:8501 por la ip publica de la maquina virtual 
 ```html
-amarillo por la dirección publica de su máquina virtual. 
 <!-- Estilos para el botón flotante y el panel --> 
   <style> 
     :root { 
