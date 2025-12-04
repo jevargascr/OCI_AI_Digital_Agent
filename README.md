@@ -468,7 +468,7 @@ server {
         proxy_read_timeout 86400; 
     } 
 } 
-NGINX 
+NGINX
 ```
 
 ### Continuar con la conﬁguración 
