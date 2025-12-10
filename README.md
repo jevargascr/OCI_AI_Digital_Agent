@@ -344,86 +344,82 @@ vi index.html
 ```
 Agregar este código justo antes de cerrar el body, pero antes modiﬁcar la parte de http://localhost:8501 por la ip publica de la maquina virtual 
 ```html
-<!-- Estilos para el botón flotante y el panel --> 
-  <style> 
-    :root { 
-        --asistente-scale: 0.9;  /* Escala general del botón y panel (ajústala libremente) */ 
-    } 
- 
-    /* Contenedor del panel flotante (iframe) */ 
-    #asistente-container { 
-        display: none; 
-        position: fixed; 
-        right: calc(28px * var(--asistente-scale)); 
-        bottom: calc(95px * var(--asistente-scale)); /* 🔹 Se coloca justo encima del botón */ 
-        width: calc(450px * var(--asistente-scale)); /* ← ancho del iframe */ 
-        height: calc(650px * var(--asistente-scale));  /* ← alto del iframe*/ 
-        background: #fff; 
-        border: 1px solid #ccc; 
-        border-radius: 16px; 
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25); 
-        z-index: 2147483646; 
-        overflow: hidden; 
-    } 
- 
-    #asistente-iframe { 
-        width: 100%; 
-        height: 100%; 
-        border: none; 
-    } 
- 
-    /* Botón flotante */ 
-    #asistente-launcher { 
-        position: fixed; 
+<!-- Estilos para el botón flotante y el panel -->
+  <style>
+    :root {
+      --asistente-scale: 0.9;
+    }
 
-![Image -1](./Images/page22_img1.png)
+    #asistente-container {
+      display: none;
+      position: fixed;
+      right: calc(28px * var(--asistente-scale));
+      bottom: calc(95px * var(--asistente-scale));
+      width: calc(450px * var(--asistente-scale));
+      height: calc(650px * var(--asistente-scale));
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 16px;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+      z-index: 2147483646;
+      overflow: hidden;
+    }
 
+    #asistente-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
-        bottom: calc(28px * var(--asistente-scale)); 
-        right: calc(28px * var(--asistente-scale)); 
-        z-index: 2147483647; 
-        background: linear-gradient(145deg, #0055B8 0%, #0072E3 100%); 
-        color: #fff; 
-        font-weight: 700; 
-        font-size: calc(18px * var(--asistente-scale)); 
-        padding: calc(18px * var(--asistente-scale)) calc(30px * var(--asistente-scale)); 
-        border: none; 
-        border-radius: calc(50px * var(--asistente-scale)); 
-        cursor: pointer; 
-        box-shadow: 0 6px 20px rgba(0, 85, 184, 0.35); 
-        transition: all 0.25s ease; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial; 
-    } 
- 
-    #asistente-launcher:hover { 
-        transform: scale(1.06); 
-        box-shadow: 0 10px 25px rgba(0, 85, 184, 0.45); 
-        background: linear-gradient(145deg, #0072E3 0%, #0093FF 100%); 
-    } 
-  </style> 
-  <!-- Contenedor del iframe oculto --> 
-  <div id="asistente-container"> 
-    <iframe id="asistente-iframe" src=""></iframe> 
-  </div> 
- 
-  <!-- Botón flotante (emoji correcto en UTF-8; alternativa con entity: &#129302;) --> 
-  <button id="asistente-launcher" onclick="toggleAsistente()">🤖 Asistente Digital</button> 
-  <!-- Lógica para mostrar/ocultar el iframe --> 
-  <script> 
-    function toggleAsistente() { 
-      const container = document.getElementById("asistente-container"); 
-      const iframe = document.getElementById("asistente-iframe"); 
-      const visible = container.style.display !== "none" && container.style.display !== ""; 
-      if (!visible) { 
-        // Cambia la URL a tu destino (Open WebUI o tu runner embebido) 
-        iframe.src = "http://localhost:8501"; 
-        container.style.display = "block"; 
-      } else { 
-        container.style.display = "none"; 
-        iframe.src = ""; // libera recursos 
-      } 
-    } 
-  </script> 
+    #asistente-launcher {
+      position: fixed;
+      bottom: calc(28px * var(--asistente-scale));
+      right: calc(28px * var(--asistente-scale));
+      z-index: 2147483647;
+      background: linear-gradient(145deg, #0055B8 0%, #0072E3 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: calc(18px * var(--asistente-scale));
+      padding: calc(18px * var(--asistente-scale)) calc(30px * var(--asistente-scale));
+      border: none;
+      border-radius: calc(50px * var(--asistente-scale));
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 85, 184, 0.35);
+      transition: all 0.25s ease;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
+    }
+
+    #asistente-launcher:hover {
+      transform: scale(1.06);
+      box-shadow: 0 10px 25px rgba(0, 85, 184, 0.45);
+      background: linear-gradient(145deg, #0072E3 0%, #0093FF 100%);
+    }
+  </style>
+
+  <!-- Contenedor del iframe oculto -->
+  <div id="asistente-container">
+    <iframe id="asistente-iframe" src=""></iframe>
+  </div>
+
+  <!-- Botón flotante -->
+  <button id="asistente-launcher" onclick="toggleAsistente()">🤖 Asistente Digital</button>
+
+  <!-- Lógica para mostrar/ocultar -->
+  <script>
+    function toggleAsistente() {
+      const container = document.getElementById("asistente-container");
+      const iframe = document.getElementById("asistente-iframe");
+      const visible = container.style.display !== "none" && container.style.display !== "";
+
+      if (!visible) {
+        iframe.src = "http://localhost:8501";
+        container.style.display = "block";
+      } else {
+        container.style.display = "none";
+        iframe.src = "";
+      }
+    }
+  </script>
 ```
 
 
